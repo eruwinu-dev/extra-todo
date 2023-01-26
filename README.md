@@ -1,38 +1,45 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# How to Build a Fullstack App with NextJS, Prisma, and MongoDB
 
-## Getting Started
+## Set up your Next JS
 
-First, run the development server:
+`create-next-app <project> --ts --eslint --use-pnpm`
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+## Add experimental superjson features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+-   `pnpm superjson next-superjson-plugin`
+-   Update `next-config.js` to use SWC plugins
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Set up Prisma and connect to your MongoDB database
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+`pnpm add prisma`
+`npx prisma init`
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+-   Add the MongoDB connection string to your .env file.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Add schema.prisma and push
 
-## Learn More
+`npx prisma db push`
 
-To learn more about Next.js, take a look at the following resources:
+## Add Prisma Studio
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+`pnpm add @prisma/client`
+`npx prisma studio`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Add Next-Auth Google Authentication
 
-## Deploy on Vercel
+`pnpm install next-auth@4 @next-auth/prisma-adapter`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+-   Go to [Google Cloud Console](https://console.cloud.google.com/apis/credentials) and create an OAuth Client ID
+    -   Set Authorized Javascript origins - https://localhost:3000
+    -   Set Authorized redirect URIs: https://localhost:3000/api/auth/callback/google
+-   Get GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, NEXTAUTH_URL, NEXTAUTH_SECRET
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Add Next-Auth API
+
+-   Create `[...nextauth].ts` file
+
+### Important Functions
+
+-   Use `next-auth/react` library for authentication. (`signIn, signOut, getSession`)
+-   Use Prisma's built in types, do not create your own type definitions unless it's for context/client side components.
+
